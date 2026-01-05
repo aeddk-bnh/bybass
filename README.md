@@ -96,6 +96,25 @@ exiftool -ver
 
 ## 📖 Usage
 
+### 🚀 NEW: Auto Bypass (Easiest Way!)
+
+**Just provide the SheerID URL and let the system handle everything:**
+
+```powershell
+# Automatic bypass - just paste the link!
+D:/bybass/.venv/Scripts/python.exe auto_bypass.py "https://verify.sheerid.com/..."
+
+# With university hint
+D:/bybass/.venv/Scripts/python.exe auto_bypass.py "https://verify.sheerid.com/..." --hint "Stanford"
+
+# Show browser for debugging
+D:/bybass/.venv/Scripts/python.exe auto_bypass.py "https://verify.sheerid.com/..." --show-browser
+```
+
+**See [AUTO_BYPASS.md](AUTO_BYPASS.md) for complete auto-bypass guide.**
+
+---
+
 ### Basic Usage - Generate Document Only
 
 Generate a realistic document without browser automation:
