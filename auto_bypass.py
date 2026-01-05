@@ -15,6 +15,7 @@ from core.browser import StealthBrowser
 from core.document import DocumentRenderer, DocumentDataGenerator
 from core.processor import ImageProcessor
 from core.spoofing import MetadataSpoofing
+from core.strategies import StrategyManager, StrategyResult
 
 logging.basicConfig(
     level=logging.INFO,
@@ -53,6 +54,7 @@ class AutoBypass:
         self.processor = ImageProcessor()
         self.spoofing = MetadataSpoofing()
         self.data_generator = DocumentDataGenerator()
+        self.strategy_manager = StrategyManager()
     
     async def bypass(self, sheerid_url: str, university_hint: Optional[str] = None) -> Dict:
         """
@@ -129,25 +131,53 @@ class AutoBypass:
             logger.info(f"✓ Processed: {processed_path}")
             logger.info(f"✓ Device: {device}")
             
-            # Step 5: Submit to SheerID
-            logger.info("\n[STEP 5/5] 🌐 Submitting to SheerID...")
-            code = await self._submit_verification(
-                sheerid_url=sheerid_url,
-                analysis=analysis,
-                student_data=student_data,
-                document_path=processed_path
-            )
+            # Step 5: Submit to SheerID with intelligent retry
+            logger.info("\n[STEP 5/5] 🌐 Submitting with intelligent retry system...")
+            logger.info("🎯 System will try multiple strategies until success")
             
-            results['code'] = code
-            results['success'] = code is not None
+            # Prepare context for strategy manager
+            browser = StealthBrowser(headless=self.headless)
+            await browser.initialize()
+            await browser.navigate(sheerid_url)
+            await asyncio.sleep(3)
+            
+            context = {
+                'browser': browser,
+                'analysis': analysis,
+                'student_data': student_data,
+                'document_path': processed_path,
+                'url': sheerid_url
+            }
+            
+            # Execute with retry
+            def on_attempt_callback(strategy_name: str, attempt_num: int):
+                logger.info(f"💡 Trying: {strategy_name} (Attempt #{attempt_num})")
+            
+            try:
+                strategy_result = await self.strategy_manager.execute_with_retry(
+                    context=context,
+                    on_attempt=on_attempt_callback
+                )
+                
+                results['code'] = strategy_result.code
+                results['success'] = strategy_result.success
+                results['strategy_used'] = strategy_result.strategy_name
+                results['total_attempts'] = strategy_result.attempts
+                
+            finally:
+                await browser.close()
             
             # Final summary
             logger.info("\n" + "="*70)
             if results['success']:
                 logger.info("✅ BYPASS SUCCESSFUL!")
-                logger.info(f"🎉 Discount Code: {code}")
+                logger.info(f"🎉 Discount Code: {results['code']}")
+                logger.info(f"📊 Strategy: {results.get('strategy_used', 'N/A')}")
+                logger.info(f"🔢 Total Attempts: {results.get('total_attempts', 0)}")
             else:
-                logger.info("⚠️  BYPASS COMPLETED (Manual verification may be required)")
+                logger.info("⚠️  BYPASS COMPLETED (All strategies exhausted)")
+                logger.info(f"🔢 Total Attempts: {results.get('total_attempts', 0)}")
+                logger.info("💡 Manual verification may be required")
             logger.info("="*70)
             
         except Exception as e:
@@ -361,6 +391,10 @@ Examples:
     print("📊 FINAL RESULTS")
     print("="*70)
     print(f"Success: {'✅ YES' if results['success'] else '❌ NO'}")
+    
+    if results.get('strategy_used'):
+        print(f"\n🎯 Winning Strategy: {results['strategy_used']}")
+        print(f"🔢 Total Attempts: {results.get('total_attempts', 0)}")
     
     if results['generated_data']:
         print(f"\nGenerated Identity:")

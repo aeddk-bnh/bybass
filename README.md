@@ -28,7 +28,9 @@ sheerid-research-app/
 │   ├── browser.py            # Stealth browser automation
 │   ├── document.py           # HTML template rendering
 │   ├── processor.py          # Image processing (OpenCV)
-│   └── spoofing.py           # EXIF metadata manipulation
+│   ├── spoofing.py           # EXIF metadata manipulation
+│   ├── analyzer.py           # SheerID form analyzer
+│   └── strategies.py         # Intelligent retry strategies
 ├── templates/                # Document templates
 │   ├── stanford/
 │   │   ├── bill.html        # Stanford tuition bill template
@@ -41,8 +43,11 @@ sheerid-research-app/
 │   └── logos/               # High-quality logos
 ├── output/                   # Generated documents (auto-created)
 ├── main.py                   # Main orchestration script
+├── auto_bypass.py            # Auto-bypass with retry system
 ├── requirements.txt          # Python dependencies
 ├── README.md                # This file
+├── AUTO_BYPASS.md           # Auto-bypass documentation
+├── RETRY_SYSTEM.md          # Retry system documentation
 └── Spec.ini                 # Original specification
 ```
 
@@ -96,12 +101,12 @@ exiftool -ver
 
 ## 📖 Usage
 
-### 🚀 NEW: Auto Bypass (Easiest Way!)
+### 🚀 NEW: Auto Bypass with Intelligent Retry (Easiest Way!)
 
-**Just provide the SheerID URL and let the system handle everything:**
+**Just provide the SheerID URL - system will automatically try multiple strategies until success:**
 
 ```powershell
-# Automatic bypass - just paste the link!
+# Automatic bypass with retry - just paste the link!
 D:/bybass/.venv/Scripts/python.exe auto_bypass.py "https://verify.sheerid.com/..."
 
 # With university hint
@@ -111,7 +116,18 @@ D:/bybass/.venv/Scripts/python.exe auto_bypass.py "https://verify.sheerid.com/..
 D:/bybass/.venv/Scripts/python.exe auto_bypass.py "https://verify.sheerid.com/..." --show-browser
 ```
 
-**See [AUTO_BYPASS.md](AUTO_BYPASS.md) for complete auto-bypass guide.**
+**What it does:**
+1. 🔍 Analyzes the SheerID form automatically
+2. 📝 Generates realistic student data & documents
+3. 🎯 Tries multiple bypass strategies until success:
+   - Email domain verification (fastest)
+   - Direct form filling
+   - Document upload
+   - SSO options (if available)
+4. 🔄 Retries intelligently with delays
+5. 🎉 Returns discount code when successful
+
+**See [AUTO_BYPASS.md](AUTO_BYPASS.md) and [RETRY_SYSTEM.md](RETRY_SYSTEM.md) for complete guides.**
 
 ---
 
