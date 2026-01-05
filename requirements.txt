@@ -1,0 +1,32 @@
+# SheerID Research Application - Python Dependencies
+# Security research tool for studying authentication systems
+
+# Core browser automation
+playwright>=1.40.0
+playwright-stealth>=1.0.6
+
+# Web scraping and searching
+beautifulsoup4>=4.12.0
+requests>=2.31.0
+
+# Image processing
+opencv-python>=4.8.0
+numpy>=1.24.0
+Pillow>=10.0.0
+
+# Template rendering
+Jinja2>=3.1.0
+
+# Data generation
+Faker>=19.0.0
+
+# Metadata manipulation (requires ExifTool binary)
+# ExifTool must be installed separately from https://exiftool.org/
+
+# Optional: PDF processing for template analysis
+PyPDF2>=3.0.0
+pdfplumber>=0.10.0
+
+# Utilities
+python-dotenv>=1.0.0
+colorama>=0.4.6

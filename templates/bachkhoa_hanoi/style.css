@@ -1,0 +1,189 @@
+/* Hanoi University of Science and Technology - Enrollment Verification Styling */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Times New Roman', Times, serif;
+    background-color: #ffffff;
+    color: #000;
+    line-height: 1.8;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 50px 60px;
+    background-color: #ffffff;
+    border: 2px solid #c00000; /* HUST Red */
+}
+
+header {
+    text-align: center;
+    border-bottom: 3px double #c00000;
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+}
+
+.logo-section h1 {
+    color: #c00000;
+    font-size: 24px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+}
+
+.english-name {
+    font-size: 13px;
+    color: #555;
+    font-style: italic;
+    margin-bottom: 10px;
+}
+
+.department {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    margin-top: 10px;
+    text-transform: uppercase;
+}
+
+.document-title {
+    text-align: center;
+    margin: 40px 0 30px 0;
+}
+
+.document-title h2 {
+    color: #c00000;
+    font-size: 22px;
+    font-weight: bold;
+    letter-spacing: 3px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+
+.document-title .subtitle {
+    font-size: 14px;
+    color: #666;
+    font-style: italic;
+}
+
+.content {
+    margin-bottom: 40px;
+}
+
+.intro {
+    font-size: 15px;
+    margin-bottom: 25px;
+    text-align: justify;
+}
+
+.student-details {
+    background-color: #f9f9f9;
+    padding: 25px;
+    margin-bottom: 25px;
+    border-left: 5px solid #c00000;
+}
+
+.detail-row {
+    display: flex;
+    margin-bottom: 12px;
+    font-size: 15px;
+}
+
+.detail-row .label {
+    font-weight: bold;
+    min-width: 140px;
+    color: #000;
+}
+
+.detail-row .value {
+    color: #333;
+    text-transform: uppercase;
+}
+
+.confirmation-text {
+    font-size: 15px;
+    margin: 25px 0;
+    text-align: justify;
+    font-weight: bold;
+}
+
+.purpose {
+    font-size: 14px;
+    font-style: italic;
+    color: #555;
+    text-align: justify;
+}
+
+.signature-section {
+    margin-top: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.issue-info {
+    font-size: 14px;
+}
+
+.issue-info p {
+    margin-bottom: 8px;
+}
+
+.signature-box {
+    text-align: center;
+    min-width: 250px;
+}
+
+.signature-title {
+    font-weight: bold;
+    font-size: 14px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.signature-space {
+    height: 80px;
+    margin: 20px 0;
+}
+
+.signature-instruction {
+    font-size: 13px;
+    font-style: italic;
+    color: #555;
+}
+
+footer {
+    border-top: 2px solid #c00000;
+    padding-top: 20px;
+    text-align: center;
+    margin-top: 50px;
+}
+
+.address {
+    font-size: 13px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.contact {
+    font-size: 12px;
+    color: #666;
+}
+
+@media print {
+    body {
+        background-color: white;
+    }
+    
+    .container {
+        padding: 30px;
+        border: 1px solid #000;
+    }
+}

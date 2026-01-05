@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đại học Bách Khoa Hà Nội - Giấy Xác Nhận Sinh Viên</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-section">
+                <h1>ĐẠI HỌC BÁCH KHOA HÀ NỘI</h1>
+                <p class="english-name">HANOI UNIVERSITY OF SCIENCE AND TECHNOLOGY</p>
+                <p class="department">PHÒNG ĐÀO TẠO</p>
+            </div>
+        </header>
+
+        <div class="document-title">
+            <h2>GIẤY XÁC NHẬN SINH VIÊN</h2>
+            <p class="subtitle">STUDENT ENROLLMENT VERIFICATION</p>
+        </div>
+
+        <div class="content">
+            <p class="intro">Phòng Đào tạo, Đại học Bách Khoa Hà Nội xác nhận:</p>
+            
+            <div class="student-details">
+                <div class="detail-row">
+                    <span class="label">Họ và tên:</span>
+                    <span class="value">{{ student_name }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Mã sinh viên:</span>
+                    <span class="value">{{ student_id }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Ngành học:</span>
+                    <span class="value">{{ program }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Trạng thái:</span>
+                    <span class="value">{{ enrollment_status }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Năm học:</span>
+                    <span class="value">{{ academic_year }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Học kỳ:</span>
+                    <span class="value">{{ semester }}</span>
+                </div>
+            </div>
+
+            <p class="confirmation-text">
+                Là sinh viên đang theo học tại Đại học Bách Khoa Hà Nội.
+            </p>
+
+            <p class="purpose">
+                Giấy xác nhận này được cấp theo yêu cầu của sinh viên để sử dụng cho mục đích cá nhân.
+            </p>
+        </div>
+
+        <div class="signature-section">
+            <div class="issue-info">
+                <p><strong>Ngày cấp:</strong> {{ issue_date }}</p>
+                <p><strong>Mã xác thực:</strong> {{ verification_code }}</p>
+            </div>
+            
+            <div class="signature-box">
+                <p class="signature-title">{{ registrar_name }}</p>
+                <div class="signature-space"></div>
+                <p class="signature-instruction">(Ký tên và đóng dấu)</p>
+            </div>
+        </div>
+
+        <footer>
+            <p class="address">Số 1 Đại Cồ Việt, Hai Bà Trưng, Hà Nội</p>
+            <p class="contact">Điện thoại: (024) 3869 2008 | Email: daotao@hust.edu.vn</p>
+        </footer>
+    </div>
+</body>
+</html>

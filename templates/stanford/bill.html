@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stanford University - Tuition Bill</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <h1>STANFORD UNIVERSITY</h1>
+                <p class="subtitle">Office of Student Financial Services</p>
+            </div>
+            <div class="header-info">
+                <p>Stanford, CA 94305-6105</p>
+                <p>Phone: (650) 723-3058</p>
+            </div>
+        </header>
+
+        <div class="document-title">
+            <h2>STUDENT TUITION BILL</h2>
+            <p class="semester">{{ semester }}</p>
+        </div>
+
+        <div class="student-info">
+            <div class="info-row">
+                <span class="label">Student Name:</span>
+                <span class="value">{{ student_name }}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Student ID:</span>
+                <span class="value">{{ student_id }}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Billing Date:</span>
+                <span class="value">{{ billing_date }}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Payment Due:</span>
+                <span class="value due-date">{{ due_date }}</span>
+            </div>
+        </div>
+
+        <div class="charges">
+            <h3>Charges Summary</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Tuition (Full-time)</td>
+                        <td class="amount">{{ tuition_amount }}</td>
+                    </tr>
+                    <tr>
+                        <td>Student Fees</td>
+                        <td class="amount">{{ fees_amount }}</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td><strong>Total Amount Due</strong></td>
+                        <td class="amount"><strong>{{ total_amount }}</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="payment-info">
+            <h3>Payment Information</h3>
+            <p><strong>Account Number:</strong> {{ account_number }}</p>
+            <p><strong>Payment Status:</strong> {{ payment_status }}</p>
+            <p class="notice">Please remit payment by the due date to avoid late fees.</p>
+        </div>
+
+        <footer>
+            <p class="footer-text">For questions regarding this bill, please contact Student Financial Services</p>
+            <p class="footer-text">Stanford University • {{ billing_date }}</p>
+        </footer>
+    </div>
+</body>
+</html>
