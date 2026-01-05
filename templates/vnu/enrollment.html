@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vietnam National University, Hanoi - Enrollment Verification</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="document">
+        <header>
+            <div class="logo">Vietnam National University, Hanoi</div>
+            <h1>ENROLLMENT VERIFICATION</h1>
+        </header>
+        
+        <section class="verification-body">
+            <p class="date">Date: {{ issue_date }}</p>
+            
+            <p class="statement">
+                This is to certify that <strong>{{ name }}</strong>, 
+                Student ID <strong>{{ id }}</strong>, is currently enrolled as a 
+                <strong>{{ enrollment_status }}</strong> student at Vietnam National University, Hanoi 
+                for the <strong>{{ term }}</strong> term.
+            </p>
+            
+            <div class="details">
+                <div class="detail-row">
+                    <span class="label">Program:</span>
+                    <span class="value">{{ program }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Academic Level:</span>
+                    <span class="value">{{ level }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Expected Graduation:</span>
+                    <span class="value">{{ graduation_date }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Enrollment Status:</span>
+                    <span class="value">{{ enrollment_status }}</span>
+                </div>
+            </div>
+            
+            <div class="signature">
+                <div class="signature-line"></div>
+                <p><strong>{{ registrar_name }}</strong></p>
+                <p>University Registrar</p>
+                <p>Vietnam National University, Hanoi</p>
+            </div>
+        </section>
+        
+        <footer>
+            <p class="verification-code">Verification Code: {{ verification_code }}</p>
+            <p class="contact">Vietnam National University, Hanoi - Office of the Registrar</p>
+            <p class="confidential">This is an official document</p>
+        </footer>
+    </div>
+</body>
+</html>

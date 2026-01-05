@@ -14,12 +14,12 @@ body {
     max-width: 850px;
     margin: 0 auto;
     background: white;
-    border: 2px solid #8C1515;
+    border: 2px solid #002145;
 }
 
 header {
-    background: #8C1515;
-    color: #FFFFFF;
+    background: #002145;
+    color: #0055B7;
     padding: 30px;
     text-align: center;
 }
@@ -65,7 +65,7 @@ h1 {
 }
 
 .charges h2 {
-    color: #8C1515;
+    color: #002145;
     margin-bottom: 20px;
 }
 
@@ -81,14 +81,14 @@ th, td {
 }
 
 th {
-    background: #8C1515;
-    color: #FFFFFF;
+    background: #002145;
+    color: #0055B7;
 }
 
 .total td {
     font-size: 18px;
     padding-top: 15px;
-    border-top: 2px solid #8C1515;
+    border-top: 2px solid #002145;
 }
 
 footer {

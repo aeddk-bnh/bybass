@@ -30,24 +30,28 @@ sheerid-research-app/
 │   ├── processor.py          # Image processing (OpenCV)
 │   ├── spoofing.py           # EXIF metadata manipulation
 │   ├── analyzer.py           # SheerID form analyzer
-│   └── strategies.py         # Intelligent retry strategies
-├── templates/                # Document templates
-│   ├── stanford/
-│   │   ├── bill.html        # Stanford tuition bill template
-│   │   └── style.css
-│   └── bachkhoa_hanoi/
-│       ├── enrollment.html  # HUST enrollment verification
-│       └── style.css
+│   ├── strategies.py         # Intelligent retry strategies
+│   └── template_generator.py # Dynamic template generator (18 universities)
+├── templates/                # Document templates (auto-generated)
+│   ├── stanford/             # Stanford University
+│   ├── harvard/              # Harvard University
+│   ├── mit/                  # MIT
+│   ├── oxford/               # Oxford University
+│   ├── cambridge/            # Cambridge University
+│   ├── hust/                 # HUST (Vietnam)
+│   └── ... (18 total)        # + 12 more universities
 ├── assets/                   # Static resources
 │   ├── fonts/               # Institution-specific fonts
 │   └── logos/               # High-quality logos
 ├── output/                   # Generated documents (auto-created)
 ├── main.py                   # Main orchestration script
-├── auto_bypass.py            # Auto-bypass with retry system
+├── auto_bypass.py            # Auto-bypass with retry + multi-university
+├── generate_templates.py     # Generate all university templates
 ├── requirements.txt          # Python dependencies
 ├── README.md                # This file
 ├── AUTO_BYPASS.md           # Auto-bypass documentation
 ├── RETRY_SYSTEM.md          # Retry system documentation
+├── MULTI_UNIVERSITY.md      # Multi-university system documentation
 └── Spec.ini                 # Original specification
 ```
 
@@ -101,33 +105,36 @@ exiftool -ver
 
 ## 📖 Usage
 
-### 🚀 NEW: Auto Bypass with Intelligent Retry (Easiest Way!)
+### 🚀 NEW: Auto Bypass with Intelligent Retry + Multi-University (Easiest & Most Powerful!)
 
-**Just provide the SheerID URL - system will automatically try multiple strategies until success:**
+**Just provide the SheerID URL - system will automatically try multiple strategies AND multiple universities until success:**
 
 ```powershell
-# Automatic bypass with retry - just paste the link!
-D:/bybass/.venv/Scripts/python.exe auto_bypass.py "https://verify.sheerid.com/..."
+# Generate all university templates first (only once)
+D:/bybass/.venv/Scripts/python.exe generate_templates.py
 
-# With university hint
-D:/bybass/.venv/Scripts/python.exe auto_bypass.py "https://verify.sheerid.com/..." --hint "Stanford"
+# Automatic bypass with multi-university retry
+D:/bybass/.venv/Scripts/python.exe auto_bypass.py "https://verify.sheerid.com/..." --multi-university
 
 # Show browser for debugging
-D:/bybass/.venv/Scripts/python.exe auto_bypass.py "https://verify.sheerid.com/..." --show-browser
+D:/bybass/.venv/Scripts/python.exe auto_bypass.py "https://verify.sheerid.com/..." --multi-university --show-browser
 ```
 
 **What it does:**
 1. 🔍 Analyzes the SheerID form automatically
 2. 📝 Generates realistic student data & documents
-3. 🎯 Tries multiple bypass strategies until success:
+3. 🌍 **NEW: Tries 18 different universities** (Stanford, Harvard, MIT, Oxford, Cambridge, HUST, etc.)
+4. 🎯 Tries multiple bypass strategies for each university:
    - Email domain verification (fastest)
    - Direct form filling
    - Document upload
-   - SSO options (if available)
-4. 🔄 Retries intelligently with delays
-5. 🎉 Returns discount code when successful
+   - University rotation (automatically switches universities)
+5. 🔄 Retries intelligently with delays
+6. 🎉 Returns discount code when successful
 
-**See [AUTO_BYPASS.md](AUTO_BYPASS.md) and [RETRY_SYSTEM.md](RETRY_SYSTEM.md) for complete guides.**
+**Available Universities:** 18 universities from 🇺🇸 USA, 🇬🇧 UK, 🇻🇳 Vietnam, 🇨🇦 Canada, 🇦🇺 Australia
+
+**See [AUTO_BYPASS.md](AUTO_BYPASS.md), [RETRY_SYSTEM.md](RETRY_SYSTEM.md), and [MULTI_UNIVERSITY.md](MULTI_UNIVERSITY.md) for complete guides.**
 
 ---
 

@@ -370,6 +370,9 @@ Examples:
   # With university hint
   python auto_bypass.py "https://verify.sheerid.com/..." --hint "Stanford"
   
+  # Try multiple universities automatically
+  python auto_bypass.py "https://verify.sheerid.com/..." --multi-university
+  
   # Show browser (for debugging)
   python auto_bypass.py "https://verify.sheerid.com/..." --show-browser
         """
@@ -379,11 +382,19 @@ Examples:
     parser.add_argument('--hint', help='University hint (optional)')
     parser.add_argument('--show-browser', action='store_true',
                        help='Show browser window (default: headless)')
+    parser.add_argument('--multi-university', action='store_true',
+                       help='Try multiple different universities automatically')
     
     args = parser.parse_args()
     
     # Run bypass
     bypass = AutoBypass(headless=not args.show_browser)
+    
+    # Enable multi-university mode
+    if args.multi_university:
+        bypass.strategy_manager = __import__('core.strategies', fromlist=['StrategyManager']).StrategyManager(enable_multi_university=True)
+        logger.info("🌍 Multi-University mode enabled - will try different universities")
+    
     results = await bypass.bypass(args.url, args.hint)
     
     # Print results

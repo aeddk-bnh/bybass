@@ -260,15 +260,134 @@ class EmailDomainStrategy(BypassStrategy):
         return None
 
 
+class MultiUniversityStrategy(BypassStrategy):
+    """Strategy: Try different universities automatically"""
+    
+    def __init__(self):
+        super().__init__(
+            name="Multi-University Rotation",
+            description="Automatically try documents from different universities"
+        )
+        self.tried_universities = set()
+    
+    async def execute(self, context: Dict) -> StrategyResult:
+        """Try with different university template"""
+        from core.template_generator import TemplateGenerator, UniversityDatabase
+        from core.document import DocumentRenderer, DocumentDataGenerator
+        from core.processor import ImageProcessor
+        from core.spoofing import MetadataSpoofing
+        import random
+        
+        logger.info(f"[{self.name}] Trying different university...")
+        
+        try:
+            # Get available universities not yet tried
+            all_universities = UniversityDatabase.get_all_universities()
+            available = [u for u in all_universities if u['key'] not in self.tried_universities]
+            
+            if not available:
+                return StrategyResult(False, self.name, error="All universities tried")
+            
+            # Pick random university
+            university = random.choice(available)
+            self.tried_universities.add(university['key'])
+            
+            logger.info(f"  → Trying: {university['name']}")
+            
+            # Generate template if not exists
+            gen = TemplateGenerator()
+            gen.create_template(university['key'])
+            
+            # Generate new student data for this university
+            renderer = DocumentRenderer()
+            data_gen = DocumentDataGenerator()
+            processor = ImageProcessor()
+            spoofing = MetadataSpoofing()
+            
+            # Create student identity
+            first_name = random.choice(['John', 'Michael', 'David', 'James', 'Sarah', 'Emily'])
+            last_name = random.choice(['Smith', 'Johnson', 'Williams', 'Brown', 'Jones'])
+            student_name = f"{first_name} {last_name}"
+            
+            # Generate student ID
+            year = random.randint(2020, 2024)
+            num = random.randint(1, 9999)
+            student_id = university['id_format'].format(year=year, num=num)
+            
+            # Generate document
+            template_file = 'bill.html' if university['type'] == 'bill' else 'enrollment.html'
+            template_path = f"{university['key']}/{template_file}"
+            
+            if university['type'] == 'bill':
+                doc_data = data_gen.generate_tuition_bill_data(student_name, student_id, university['name'])
+            else:
+                doc_data = data_gen.generate_enrollment_verification_data(student_name, student_id, university['name'])
+            
+            # Render and process
+            image_path = await renderer.render_and_capture(template_path, doc_data)
+            processed_path = processor.process_realistic_photo(
+                image_path,
+                image_path.replace('.png', '_realistic.jpg'),
+                'medium'
+            )
+            spoofing.spoof_realistic_photo(processed_path, 'iphone_14')
+            
+            # Try upload
+            browser = context['browser']
+            email = f"{first_name.lower()}.{last_name.lower()}@{university['domain']}"
+            
+            form_data = {
+                'firstName': first_name,
+                'lastName': last_name,
+                'email': email,
+                'studentId': student_id,
+            }
+            
+            await browser.fill_form(form_data)
+            await asyncio.sleep(1)
+            
+            # Try upload if available
+            uploaded = await browser.upload_document(processed_path)
+            if uploaded:
+                await asyncio.sleep(2)
+                
+                # Check success
+                page_text = await browser.page.content()
+                if 'success' in page_text.lower() or 'verified' in page_text.lower():
+                    code = await self._extract_code(browser.page)
+                    return StrategyResult(True, f"{self.name} ({university['name']})", code=code)
+            
+            return StrategyResult(False, self.name, error=f"{university['name']} didn't work")
+            
+        except Exception as e:
+            logger.error(f"Error in multi-university: {e}")
+            return StrategyResult(False, self.name, error=str(e))
+    
+    async def _extract_code(self, page) -> Optional[str]:
+        """Extract code"""
+        try:
+            text = await page.inner_text('body')
+            import re
+            patterns = [r'code[:\s]+([A-Z0-9]{6,})', r'\b([A-Z0-9]{8,12})\b']
+            for pattern in patterns:
+                match = re.search(pattern, text, re.IGNORECASE)
+                if match:
+                    return match.group(1)
+        except:
+            pass
+        return None
+
+
 class StrategyManager:
     """
     Manages multiple bypass strategies and intelligent retry logic
     """
     
-    def __init__(self):
+    def __init__(self, enable_multi_university: bool = True):
         self.strategies: List[BypassStrategy] = []
         self.max_attempts_per_strategy = 3
-        self.max_total_attempts = 10
+        self.max_total_attempts = 15  # Increased for multi-university
+        self.enable_multi_university = enable_multi_university
         
         # Register all strategies
         self._register_strategies()
@@ -279,8 +398,14 @@ class StrategyManager:
             EmailDomainStrategy(),      # Fast, often works instantly
             FormFillStrategy(),          # Basic form filling
             DocumentUploadStrategy(),    # More complex but thorough
-            SSOStrategy(),               # Fallback if available
         ]
+        
+        # Add multi-university rotation
+        if self.enable_multi_university:
+            self.strategies.append(MultiUniversityStrategy())
+        
+        # SSO as fallback
+        self.strategies.append(SSOStrategy())
         
         logger.info(f"Registered {len(self.strategies)} bypass strategies")
     
