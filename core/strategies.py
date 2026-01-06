@@ -263,12 +263,13 @@ class EmailDomainStrategy(BypassStrategy):
 class MultiUniversityStrategy(BypassStrategy):
     """Strategy: Try different universities automatically"""
     
-    def __init__(self):
+    def __init__(self, country_filter: str = 'USA'):
         super().__init__(
             name="Multi-University Rotation",
-            description="Automatically try documents from different universities"
+            description=f"Automatically try documents from different {country_filter} universities"
         )
         self.tried_universities = set()
+        self.country_filter = country_filter
     
     async def execute(self, context: Dict) -> StrategyResult:
         """Try with different university template"""
@@ -278,15 +279,19 @@ class MultiUniversityStrategy(BypassStrategy):
         from core.spoofing import MetadataSpoofing
         import random
         
-        logger.info(f"[{self.name}] Trying different university...")
+        logger.info(f"[{self.name}] Trying different {self.country_filter} university...")
         
         try:
-            # Get available universities not yet tried
+            # Get available universities not yet tried (filtered by country)
             all_universities = UniversityDatabase.get_all_universities()
-            available = [u for u in all_universities if u['key'] not in self.tried_universities]
+            available = [
+                u for u in all_universities 
+                if u['key'] not in self.tried_universities 
+                and u['country'] == self.country_filter
+            ]
             
             if not available:
-                return StrategyResult(False, self.name, error="All universities tried")
+                return StrategyResult(False, self.name, error=f"All {self.country_filter} universities tried")
             
             # Pick random university
             university = random.choice(available)
@@ -383,11 +388,12 @@ class StrategyManager:
     Manages multiple bypass strategies and intelligent retry logic
     """
     
-    def __init__(self, enable_multi_university: bool = True):
+    def __init__(self, enable_multi_university: bool = True, country_filter: str = 'USA'):
         self.strategies: List[BypassStrategy] = []
         self.max_attempts_per_strategy = 3
         self.max_total_attempts = 15  # Increased for multi-university
         self.enable_multi_university = enable_multi_university
+        self.country_filter = country_filter
         
         # Register all strategies
         self._register_strategies()
@@ -402,12 +408,14 @@ class StrategyManager:
         
         # Add multi-university rotation
         if self.enable_multi_university:
-            self.strategies.append(MultiUniversityStrategy())
+            self.strategies.append(MultiUniversityStrategy(country_filter=self.country_filter))
         
         # SSO as fallback
         self.strategies.append(SSOStrategy())
         
         logger.info(f"Registered {len(self.strategies)} bypass strategies")
+        if self.enable_multi_university:
+            logger.info(f"Multi-University mode: {self.country_filter} universities only")
     
     async def execute_with_retry(
         self, 

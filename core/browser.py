@@ -102,11 +102,17 @@ class StealthBrowser:
     async def fill_form(self, form_data: Dict[str, str]):
         """
         Fill form with human-like typing simulation
+        Handles special fields like birthdate with multiple inputs
         
         Args:
             form_data: Dictionary mapping selector to value
         """
         for selector, value in form_data.items():
+            # Special handling for birthdate (3 separate fields)
+            if 'birthDate' in selector or 'birthdate' in selector:
+                await self._fill_birthdate(selector, value)
+                continue
+            
             await self.page.wait_for_selector(selector, timeout=10000)
             
             # Random delay before interaction
@@ -118,6 +124,64 @@ class StealthBrowser:
                 await self.page.type(selector, char, delay=random.randint(50, 150))
             
             logger.info(f"Filled field: {selector}")
+    
+    async def _fill_birthdate(self, base_selector: str, date_value: str):
+        """
+        Fill birthdate fields (handles both single and multi-field formats)
+        
+        Args:
+            base_selector: Base selector for birthdate field
+            date_value: Date in MM/DD/YYYY format
+        """
+        try:
+            # Parse date
+            month, day, year = date_value.split('/')
+            month_names = ['January', 'February', 'March', 'April', 'May', 'June',
+                          'July', 'August', 'September', 'October', 'November', 'December']
+            month_name = month_names[int(month) - 1]
+            
+            # Try SheerID-style 3-field format
+            try:
+                # Month dropdown (combobox)
+                month_selector = base_selector.replace('birthDate', 'birthdate__month').replace('birth-date', 'birthdate__month')
+                if 'sid-birthdate' not in month_selector:
+                    month_selector = '#sid-birthdate__month'
+                
+                await self.page.fill(month_selector, month_name)
+                await asyncio.sleep(0.3)
+                await self.page.keyboard.press('Enter')
+                logger.info(f"Filled month: {month_name}")
+                
+                # Day input
+                day_selector = base_selector.replace('birthDate', 'birthdate-day').replace('birth-date', 'birthdate-day')
+                if 'sid-birthdate' not in day_selector:
+                    day_selector = '#sid-birthdate-day'
+                    
+                await self.page.fill(day_selector, day)
+                logger.info(f"Filled day: {day}")
+                
+                # Year input
+                year_selector = base_selector.replace('birthDate', 'birthdate-year').replace('birth-date', 'birthdate-year')
+                if 'sid-birthdate' not in year_selector:
+                    year_selector = '#sid-birthdate-year'
+                    
+                await self.page.fill(year_selector, year)
+                logger.info(f"Filled year: {year}")
+                
+            except Exception as e:
+                # Fallback to single field
+                logger.info(f"3-field birthdate failed, trying single field: {e}")
+                await self.page.wait_for_selector(base_selector, timeout=5000)
+                await self.page.fill(base_selector, date_value)
+                logger.info(f"Filled birthdate (single field): {date_value}")
+                
+        except Exception as e:
+            logger.error(f"Error filling birthdate: {e}")
+            # Last resort: try the base selector as-is
+            try:
+                await self.page.fill(base_selector, date_value)
+            except:
+                pass
     
     async def intercept_sso_requests(self):
         """
