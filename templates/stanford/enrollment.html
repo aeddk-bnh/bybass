@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stanford University - Enrollment Verification</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="document">
+        <header>
+            <div class="logo">Stanford University</div>
+            <h1>ENROLLMENT VERIFICATION</h1>
+            <div class="term">{{ semester }}</div>
+        </header>
+        
+        <section class="student-info">
+            <div class="info-row">
+                <span class="label">Student Name:</span>
+                <span class="value">{{ name }}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Student ID:</span>
+                <span class="value">{{ id }}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Enrollment Status:</span>
+                <span class="value">Full-Time</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Program:</span>
+                <span class="value">{{ program }}</span>
+            </div>
+        </section>
+        
+        <section class="courses">
+            <h2>Current Course Schedule</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Course Code</th>
+                        <th>Course Title</th>
+                        <th>Units</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>CS106A</td>
+                        <td>Programming Methodology</td>
+                        <td>5</td>
+                    </tr>
+                    <tr>
+                        <td>MATH51</td>
+                        <td>Linear Algebra & Differential Calculus</td>
+                        <td>5</td>
+                    </tr>
+                    <tr>
+                        <td>ENGR40M</td>
+                        <td>Introduction to Electrical Engineering</td>
+                        <td>5</td>
+                    </tr>
+                    <tr class="total">
+                        <td colspan="2"><strong>Total Units</strong></td>
+                        <td><strong>15</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        
+        <section class="verification">
+            <p class="verify-text">
+                This document verifies that <strong>{{ name }}</strong> is enrolled as a 
+                full-time student at Stanford University for the {{ semester }} semester.
+            </p>
+        </section>
+        
+        <footer>
+            <p>Issue Date: {{ issue_date }}</p>
+            <p>Stanford University - Office of the Registrar</p>
+            <p class="confidential">OFFICIAL DOCUMENT - For Verification Purposes Only</p>
+        </footer>
+    </div>
+</body>
+</html>
