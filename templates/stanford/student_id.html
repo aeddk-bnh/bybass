@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stanford University - Student ID Card</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #8C1515 0%, #2E2D29 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px;
+        }
+        
+        .id-card {
+            width: 850px;
+            height: 540px;
+            background: linear-gradient(to bottom, #FFFFFF 0%, #F5F5F5 100%);
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, #8C1515 0%, #B83A4B 100%);
+            padding: 25px 40px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .university-logo {
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        
+        .card-type {
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .card-body {
+            padding: 40px;
+            display: flex;
+            gap: 40px;
+        }
+        
+        .photo-section {
+            flex-shrink: 0;
+        }
+        
+        .student-photo {
+            width: 200px;
+            height: 250px;
+            background: linear-gradient(135deg, #E5E5E5 0%, #CCCCCC 100%);
+            border: 3px solid #8C1515;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            color: #8C1515;
+            font-weight: bold;
+        }
+        
+        .info-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .info-field {
+            border-bottom: 2px solid #E5E5E5;
+            padding-bottom: 8px;
+        }
+        
+        .info-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .info-value {
+            font-size: 20px;
+            color: #2E2D29;
+            font-weight: 600;
+        }
+        
+        .student-id {
+            font-size: 24px;
+            color: #8C1515;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .card-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #2E2D29;
+            padding: 20px 40px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .expiration {
+            font-size: 14px;
+        }
+        
+        .exp-label {
+            color: #AAA;
+            margin-right: 10px;
+        }
+        
+        .exp-date {
+            font-weight: bold;
+            font-size: 16px;
+            color: #FFD700;
+        }
+        
+        .barcode {
+            width: 250px;
+            height: 50px;
+            background: repeating-linear-gradient(
+                90deg,
+                #000 0px,
+                #000 2px,
+                #FFF 2px,
+                #FFF 4px
+            );
+            border-radius: 4px;
+        }
+        
+        .validity-badge {
+            position: absolute;
+            top: 120px;
+            right: 40px;
+            background: #FFD700;
+            color: #2E2D29;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            box-shadow: 0 4px 10px rgba(255, 215, 0, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="id-card">
+        <div class="card-header">
+            <div class="university-logo">STANFORD UNIVERSITY</div>
+            <div class="card-type">Student ID</div>
+        </div>
+        
+        <div class="card-body">
+            <div class="photo-section">
+                <div class="student-photo">
+                    {{ name.split()[0][0] }}{{ name.split()[1][0] }}
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <div class="info-field">
+                    <div class="info-label">Full Name</div>
+                    <div class="info-value">{{ name }}</div>
+                </div>
+                
+                <div class="info-field">
+                    <div class="info-label">Student ID Number</div>
+                    <div class="student-id">{{ id }}</div>
+                </div>
+                
+                <div class="info-field">
+                    <div class="info-label">Program</div>
+                    <div class="info-value">{{ program }}</div>
+                </div>
+                
+                <div class="info-field">
+                    <div class="info-label">Status</div>
+                    <div class="info-value">Full-Time Student</div>
+                </div>
+                
+                <div class="info-field">
+                    <div class="info-label">Academic Year</div>
+                    <div class="info-value">{{ academic_year }}</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="validity-badge">VALID</div>
+        
+        <div class="card-footer">
+            <div class="expiration">
+                <span class="exp-label">EXPIRES:</span>
+                <span class="exp-date">{{ expiration_date }}</span>
+            </div>
+            <div class="barcode"></div>
+        </div>
+    </div>
+</body>
+</html>
