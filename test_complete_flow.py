@@ -65,67 +65,81 @@ async def main():
         await asyncio.sleep(3)  # Wait for JS to render
         print("  ✓ Loaded\n")
         
-        # Wait for form
-        print("[3] Waiting for form...")
-        await page.wait_for_selector('#sid-college-name', state='visible', timeout=15000)
-        print("  ✓ Form ready\n")
-        
-        # Fill university
-        print(f"[4] Selecting: {university['name']}...")
-        await page.fill('#sid-college-name', university['name'])
-        await asyncio.sleep(1)
-        await page.keyboard.press('ArrowDown')
-        await page.keyboard.press('Enter')
-        print("  ✓ Selected\n")
-        
-        # Fill form fields
-        print("[5] Filling personal info...")
-        await page.fill('#sid-first-name', first_name)
-        await page.fill('#sid-last-name', last_name)
-        print("  ✓ Name filled\n")
-        
-        # Fill birthdate - 3 separate fields
-        print("[6] Filling birthdate...")
-        await page.fill('#sid-birthdate__month', 'June')
-        await asyncio.sleep(0.5)
-        await page.keyboard.press('Enter')
-        await page.fill('#sid-birthdate-day', '15')
-        await page.fill('#sid-birthdate-year', '2000')
-        print("  ✓ Birthdate filled\n")
-        
-        # Fill email
-        print("[7] Filling email...")
-        await page.fill('#sid-email', email)
-        print("  ✓ Email filled\n")
-        
-        # Screenshot before submit
+        # Create output directory
         output_dir = Path("output")
         output_dir.mkdir(exist_ok=True)
-        await page.screenshot(path=str(output_dir / "1_ready_to_submit.png"))
         
-        # Submit
-        print("[8] Submitting form...")
-        submit_btn = await page.query_selector('#sid-submit-wrapper__collect-info')
-        is_disabled = await submit_btn.get_attribute('aria-disabled')
+        # Check if we're already on upload page (form was submitted before)
+        print("[3] Detecting page type...")
+        upload_input = await page.query_selector('input[type="file"]')
         
-        if is_disabled == 'true':
-            print("  ⚠️ Submit button disabled - checking form validation...")
-            return 1
+        if upload_input:
+            print("  ✓ Already on upload page!\n")
+            # Skip form filling, go directly to upload
+        else:
+            # Wait for form
+            print("  → Form page detected, filling...\n")
+            await page.wait_for_selector('#sid-college-name', state='visible', timeout=15000)
+            print("  ✓ Form ready\n")
+        if upload_input:
+            print("  ✓ Already on upload page!\n")
+            # Skip form filling, go directly to upload
+        else:
+            # Wait for form
+            print("  → Form page detected, filling...\n")
+            await page.wait_for_selector('#sid-college-name', state='visible', timeout=15000)
+            print("  ✓ Form ready\n")
         
-        await submit_btn.click()
-        print("  ✓ Submitted\n")
+            # Fill university
+            print(f"[4] Selecting: {university['name']}...")
+            await page.fill('#sid-college-name', university['name'])
+            await asyncio.sleep(1)
+            await page.keyboard.press('ArrowDown')
+            await page.keyboard.press('Enter')
+            print("  ✓ Selected\n")
+            
+            # Fill form fields
+            print("[5] Filling personal info...")
+            await page.fill('#sid-first-name', first_name)
+            await page.fill('#sid-last-name', last_name)
+            print("  ✓ Name filled\n")
+            
+            # Fill birthdate - 3 separate fields
+            print("[6] Filling birthdate...")
+            await page.fill('#sid-birthdate__month', 'June')
+            await asyncio.sleep(0.5)
+            await page.keyboard.press('Enter')
+            await page.fill('#sid-birthdate-day', '15')
+            await page.fill('#sid-birthdate-year', '2000')
+            print("  ✓ Birthdate filled\n")
+            
+            # Fill email
+            print("[7] Filling email...")
+            await page.fill('#sid-email', email)
+            print("  ✓ Email filled\n")
+            
+            # Screenshot before submit
+            await page.screenshot(path=str(output_dir / "1_ready_to_submit.png"))
+            
+            # Submit
+            print("[8] Submitting form...")
+            submit_btn = await page.query_selector('#sid-submit-wrapper__collect-info')
+            is_disabled = await submit_btn.get_attribute('aria-disabled')
+            
+            if is_disabled == 'true':
+                print("  ⚠️ Submit button disabled - checking form validation...")
+                return 1
+            
+            await submit_btn.click()
+            print("  ✓ Submitted\n")
+            
+            # Wait for page transition
+            print("[9] Waiting for response...")
+            await asyncio.sleep(3)
+            await page.screenshot(path=str(output_dir / "2_after_submit.png"))
         
-        # Wait for page transition
-        print("[9] Waiting for response...")
-        await asyncio.sleep(3)
-        await page.screenshot(path=str(output_dir / "2_after_submit.png"))
-        
-        # Check if upload page
-        print("[10] Checking page type...")
-        current_url = page.url
-        page_content = await page.content()
-        
-        # Check for upload elements
+        # Now check for upload page (whether we came from form or directly)
+        print("[10] Checking for upload page...")
         upload_input = await page.query_selector('input[type="file"]')
         has_upload = upload_input is not None
         
@@ -170,10 +184,10 @@ async def main():
             # Upload
             print("[13] Uploading document...")
             await page.set_input_files('input[type="file"]', processed_path)
-            await asyncio.sleep(2)
-            print("  ✓ Document uploaded\n")
+            print("  ✓ File selected\n")
             
-            # Screenshot after upload
+            # Wait a bit for upload to process
+            await asyncio.sleep(2)
             await page.screenshot(path=str(output_dir / "3_after_upload.png"))
             
             # Submit upload form
@@ -181,34 +195,79 @@ async def main():
             upload_submit = await page.query_selector('button[type="submit"]')
             if upload_submit:
                 await upload_submit.click()
-                print("  ✓ Submitted\n")
+                print("  ✓ Upload submitted\n")
                 
-                # Wait for final result
-                print("[15] Waiting for verification result...")
-                await asyncio.sleep(5)
+                # CRITICAL: Wait ~1 minute for verification process
+                print("[15] ⏳ Waiting for verification (this takes ~60 seconds)...")
+                for i in range(12):  # 12 x 5 = 60 seconds
+                    await asyncio.sleep(5)
+                    print(f"  ⏱️  {(i+1)*5} seconds elapsed...")
+                
+                print("  ✓ Verification wait complete\n")
+                
+                # Take screenshot of result
                 await page.screenshot(path=str(output_dir / "4_final_result.png"))
                 
                 # Check for success
+                print("[16] Checking verification result...")
                 final_content = await page.content()
-                if any(word in final_content.lower() for word in ['success', 'verified', 'approved', 'congratulations']):
+                final_text = await page.inner_text('body')
+                
+                success_keywords = ['success', 'verified', 'approved', 'congratulations', 'confirmed']
+                is_success = any(word in final_content.lower() for word in success_keywords)
+                
+                if is_success:
                     print("\n" + "=" * 70)
                     print("✅ VERIFICATION SUCCESSFUL!")
                     print("=" * 70)
                     
                     # Try to extract code
                     try:
-                        body_text = await page.inner_text('body')
                         import re
-                        code_match = re.search(r'code[:\s]+([A-Z0-9]{6,})', body_text, re.IGNORECASE)
-                        if code_match:
-                            print(f"🎁 Discount Code: {code_match.group(1)}")
+                        # Look for discount/promo codes
+                        code_patterns = [
+                            r'code[:\s]+([A-Z0-9]{6,})',
+                            r'promo[:\s]+([A-Z0-9]{6,})',
+                            r'discount[:\s]+([A-Z0-9]{6,})',
+                            r'\b([A-Z0-9]{8,12})\b'
+                        ]
+                        
+                        for pattern in code_patterns:
+                            match = re.search(pattern, final_text, re.IGNORECASE)
+                            if match:
+                                print(f"🎁 Discount Code: {match.group(1)}")
+                                break
+                        else:
+                            print("ℹ️  No code found (might be on next page)")
                     except:
                         pass
                     
+                    # Save result
+                    with open(output_dir / "verification_result.txt", 'w') as f:
+                        f.write(f"University: {university['name']}\n")
+                        f.write(f"Student: {student_name}\n")
+                        f.write(f"Email: {email}\n")
+                        f.write(f"Status: VERIFIED\n")
+                        f.write(f"Timestamp: {Path(output_dir / '4_final_result.png').stat().st_mtime}\n")
+                    
                     return 0
                 else:
-                    print("\n⚠️ Verification pending or failed")
-                    print("Check screenshots in output/ folder")
+                    print("\n" + "=" * 70)
+                    print("⚠️ VERIFICATION STATUS UNCLEAR")
+                    print("=" * 70)
+                    print("Checking for error messages...")
+                    
+                    # Check for common error messages
+                    error_keywords = ['error', 'failed', 'unable', 'invalid', 'rejected', 'denied']
+                    has_error = any(word in final_content.lower() for word in error_keywords)
+                    
+                    if has_error:
+                        print("❌ Verification appears to have failed")
+                        print("Check screenshot: output/4_final_result.png")
+                    else:
+                        print("ℹ️  Still processing or requires additional steps")
+                        print("Check screenshots in output/ folder")
+                    
                     return 0
             else:
                 print("  ⚠️ No submit button found after upload")
